@@ -35,8 +35,8 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.upsertUser = exports.removeUser = exports.addUser = exports.getUser = exports.getUsers = void 0;
 const repo = __importStar(require("../repositories/user.repository"));
-const getUsers = async () => {
-    return repo.findAllUsers();
+const getUsers = async (query) => {
+    return repo.findAllUsers(query);
 };
 exports.getUsers = getUsers;
 const getUser = async (id) => {

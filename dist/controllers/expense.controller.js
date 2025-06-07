@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.upsertExpense = exports.deleteExpense = exports.createExpenseForUser = exports.getExpensesByUserId = exports.getExpenseById = exports.getAllExpenses = void 0;
 const expenseService = __importStar(require("../services/expense.service"));
 const expense_1 = require("../validators/expense");
+const utils_1 = require("../common/utils");
 const getAllExpenses = async (req, res) => {
     const expenses = await expenseService.getExpenses();
     res.json(expenses);
@@ -73,7 +74,8 @@ const createExpenseForUser = async (req, res, next) => {
     }
     const expenseData = expense_1.createExpenseSchema.safeParse(req.body);
     if (!expenseData.success) {
-        next(new Error("Failed to validate expense data: " + expenseData.error.toString()));
+        const messages = (0, utils_1.formatZodError)(expenseData.error);
+        next(new Error("Validation failed: " + messages.join("; ")));
         return;
     }
     const expense = await expenseService.addExpense(userId, expenseData.data);
@@ -107,7 +109,8 @@ const upsertExpense = async (req, res, next) => {
         if (existingExpense) {
             const result = expense_1.updateExpenseSchema.safeParse(req.body);
             if (!result.success) {
-                next(new Error("Failed to validate expense data: " + result.error.toString()));
+                const messages = (0, utils_1.formatZodError)(result.error);
+                next(new Error("Validation failed: " + messages.join("; ")));
                 return;
             }
             expenseData = result.data;
@@ -115,7 +118,8 @@ const upsertExpense = async (req, res, next) => {
         else {
             const result = expense_1.createExpenseSchema.safeParse(req.body);
             if (!result.success) {
-                next(new Error("Failed to validate expense data: " + result.error.toString()));
+                const messages = (0, utils_1.formatZodError)(result.error);
+                next(new Error("Validation failed: " + messages.join("; ")));
                 return;
             }
             expenseData = result.data;
