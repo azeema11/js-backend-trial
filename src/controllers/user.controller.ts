@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as userService from "../services/user.service";
 import { CreateUserInput, createUserSchema, getUsersQuerySchema, UpdateUserInput, updateUserSchema } from "../validators/user";
-import { number } from "zod";
 import { formatZodError } from "../common/utils";
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {

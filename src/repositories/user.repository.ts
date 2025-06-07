@@ -1,4 +1,4 @@
-import { Prisma } from "../generated/prisma";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 import { User } from "../types/user";
 import { CreateUserInput, GetUsersQueryInput, UpdateUserInput } from "../validators/user";
