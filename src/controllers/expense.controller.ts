@@ -1,6 +1,7 @@
 import * as expenseService from '../services/expense.service';
 import { Request, Response, NextFunction } from 'express';
 import { CreateExpenseInput, createExpenseSchema, UpdateExpenseInput, updateExpenseSchema } from '../validators/expense';
+import { formatZodError } from '../common/utils';
 
 export const getAllExpenses = async (req: Request, res: Response) => {
     const expenses = await expenseService.getExpenses();
@@ -43,7 +44,8 @@ export const createExpenseForUser = async (req: Request, res: Response, next: Ne
 
     const expenseData = createExpenseSchema.safeParse(req.body);
     if (!expenseData.success) {
-        next(new Error("Failed to validate expense data: " + expenseData.error.toString()));
+        const messages = formatZodError(expenseData.error);
+        next(new Error("Validation failed: " + messages.join("; ")));
         return;
     }
     const expense = await expenseService.addExpense(userId, expenseData.data);
@@ -80,14 +82,16 @@ export const upsertExpense = async (req: Request, res: Response, next: NextFunct
         if (existingExpense) {
             const result = updateExpenseSchema.safeParse(req.body);
             if (!result.success) {
-                next(new Error("Failed to validate expense data: " + result.error.toString()));
+                const messages = formatZodError(result.error);
+                next(new Error("Validation failed: " + messages.join("; ")));
                 return;
             }
             expenseData = result.data;
         } else {
             const result = createExpenseSchema.safeParse(req.body);
             if (!result.success) {
-                next(new Error("Failed to validate expense data: " + result.error.toString()));
+                const messages = formatZodError(result.error);
+                next(new Error("Validation failed: " + messages.join("; ")));
                 return;
             }
             expenseData = result.data;

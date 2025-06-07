@@ -1,10 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import * as userService from "../services/user.service";
-import { CreateUserInput, createUserSchema, UpdateUserInput, updateUserSchema } from "../validators/user";
+import { CreateUserInput, createUserSchema, getUsersQuerySchema, UpdateUserInput, updateUserSchema } from "../validators/user";
 import { number } from "zod";
+import { formatZodError } from "../common/utils";
 
-export const getAllUsers = async (req: Request, res: Response) => {
-    const users = await userService.getUsers();
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+    const parsed = getUsersQuerySchema.safeParse(req.query);
+
+    if (!parsed.success) {
+        const messages = formatZodError(parsed.error);
+        next(new Error("Validation failed: " + messages.join("; ")));
+        return;
+    }
+
+    const users = await userService.getUsers(parsed.data);
     res.json(users);
 };
 
@@ -27,7 +36,8 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const result = createUserSchema.safeParse(req.body);
     if (!result.success) {
-        next(new Error("Failed to validate user data: " + result.error.toString()));
+        const messages = formatZodError(result.error);
+        next(new Error("Validation failed: " + messages.join("; ")));
         return;
     }
 
@@ -58,14 +68,16 @@ export const upsertUser = async (req: Request, res: Response, next: NextFunction
         if (existingUser) {
             const result = updateUserSchema.safeParse(req.body);
             if (!result.success) {
-                next(new Error("Failed to validate user data: " + result.error.toString()));
+                const messages = formatZodError(result.error);
+                next(new Error("Validation failed: " + messages.join("; ")));
                 return;
             }
             userData = result.data;
         } else {
             const result = createUserSchema.safeParse(req.body);
             if (!result.success) {
-                next(new Error("Failed to validate user data: " + result.error.toString()));
+                const messages = formatZodError(result.error);
+                next(new Error("Validation failed: " + messages.join("; ")));
                 return;
             }
             userData = result.data;

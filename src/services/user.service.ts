@@ -1,8 +1,8 @@
 import * as repo from '../repositories/user.repository';
-import { CreateUserInput, UpdateUserInput } from '../validators/user';
+import { CreateUserInput, GetUsersQueryInput, UpdateUserInput } from '../validators/user';
 
-export const getUsers = async () => {
-  return repo.findAllUsers();
+export const getUsers = async (query: GetUsersQueryInput) => {
+  return repo.findAllUsers(query);
 };
 
 export const getUser = async (id: number) => {

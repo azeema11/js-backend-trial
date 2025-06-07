@@ -20,5 +20,5 @@ app.listen(PORT, () => {
 // // Error handler must have 4 arguments in Express
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
-    res.status(400).json({ error: "Something went wrong" });
+    res.status(400).json({ error: err.message.length > 0 ? err.message : "Something went wrong" });
 });
