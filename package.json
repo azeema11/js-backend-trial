@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "express": "^4.18.4"
   }
 }
