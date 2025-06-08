@@ -35,11 +35,12 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const expenseController = __importStar(require("../controllers/expense.controller"));
 const express_1 = require("express");
+const auth_1 = require("../middlewares/auth");
 const expenseRoutes = (0, express_1.Router)();
-expenseRoutes.get('/', expenseController.getAllExpenses);
-expenseRoutes.get('/:id', expenseController.getExpenseById);
-expenseRoutes.get('/user/:userId', expenseController.getExpensesByUserId);
-expenseRoutes.post('/user/:userId', expenseController.createExpenseForUser);
-expenseRoutes.delete('/:id', expenseController.deleteExpense);
-expenseRoutes.post('/:id/:userId', expenseController.upsertExpense);
+expenseRoutes.get('/', auth_1.requireAuth, expenseController.getAllExpenses);
+expenseRoutes.get('/:id', auth_1.requireAuth, expenseController.getExpenseById);
+expenseRoutes.get('/user/:userId', auth_1.requireAuth, expenseController.getExpensesByUserId);
+expenseRoutes.post('/user/:userId', auth_1.requireAuth, expenseController.createExpenseForUser);
+expenseRoutes.delete('/:id', auth_1.requireAuth, expenseController.deleteExpense);
+expenseRoutes.post('/:id/:userId', auth_1.requireAuth, expenseController.upsertExpense);
 exports.default = expenseRoutes;

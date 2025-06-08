@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as userService from "../services/user.service";
 import { CreateUserInput, createUserSchema, getUsersQuerySchema, UpdateUserInput, updateUserSchema } from "../validators/user";
-import { formatZodError } from "../common/utils";
+import { formatZodError, sanitizeUser, sanitizeUsers } from "../common/utils";
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     const parsed = getUsersQuerySchema.safeParse(req.query);
@@ -13,7 +13,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
     }
 
     const users = await userService.getUsers(parsed.data);
-    res.json(users);
+    res.json(sanitizeUsers(users));
 };
 
 export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
@@ -29,7 +29,7 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
         return;
     }
 
-    res.json(user);
+    res.json(sanitizeUser(user));
 };
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -41,7 +41,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     }
 
     const user = await userService.addUser(result.data);
-    res.status(201).json(user);
+    res.status(201).json(sanitizeUser(user));
 };
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -52,7 +52,7 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
     }
 
     const user = await userService.removeUser(id);
-    res.status(204).json(user);
+    res.status(204).json(user ? sanitizeUser(user) : null);
 };
 
 export const upsertUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -82,7 +82,7 @@ export const upsertUser = async (req: Request, res: Response, next: NextFunction
             userData = result.data;
         }
         const user = await userService.upsertUser(id, userData);
-        res.json(user);
+        res.json(sanitizeUser(user));
     } catch (err: any) {
         next(new Error(err.message));
     }

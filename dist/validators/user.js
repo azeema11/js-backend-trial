@@ -5,10 +5,12 @@ const zod_1 = require("zod");
 exports.createUserSchema = zod_1.z.object({
     name: zod_1.z.string().min(1, "Name is required"),
     email: zod_1.z.string().email("Invalid email"),
+    password: zod_1.z.string().min(6, "Password must be at least 6 characters long"),
 });
 exports.updateUserSchema = zod_1.z.object({
     name: zod_1.z.string().optional(),
     email: zod_1.z.string().email().optional(),
+    password: zod_1.z.string().min(6, "Password must be at least 6 characters long").optional(),
 });
 exports.getUsersQuerySchema = zod_1.z.object({
     page: zod_1.z.coerce.number().int().min(1).optional(),

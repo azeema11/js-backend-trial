@@ -45,7 +45,7 @@ const getAllUsers = async (req, res, next) => {
         return;
     }
     const users = await userService.getUsers(parsed.data);
-    res.json(users);
+    res.json((0, utils_1.sanitizeUsers)(users));
 };
 exports.getAllUsers = getAllUsers;
 const getUserById = async (req, res, next) => {
@@ -59,7 +59,7 @@ const getUserById = async (req, res, next) => {
         next(new Error("User not found"));
         return;
     }
-    res.json(user);
+    res.json((0, utils_1.sanitizeUser)(user));
 };
 exports.getUserById = getUserById;
 const createUser = async (req, res, next) => {
@@ -70,7 +70,7 @@ const createUser = async (req, res, next) => {
         return;
     }
     const user = await userService.addUser(result.data);
-    res.status(201).json(user);
+    res.status(201).json((0, utils_1.sanitizeUser)(user));
 };
 exports.createUser = createUser;
 const deleteUser = async (req, res, next) => {
@@ -80,7 +80,7 @@ const deleteUser = async (req, res, next) => {
         return;
     }
     const user = await userService.removeUser(id);
-    res.status(204).json(user);
+    res.status(204).json(user ? (0, utils_1.sanitizeUser)(user) : null);
 };
 exports.deleteUser = deleteUser;
 const upsertUser = async (req, res, next) => {
@@ -111,7 +111,7 @@ const upsertUser = async (req, res, next) => {
             userData = result.data;
         }
         const user = await userService.upsertUser(id, userData);
-        res.json(user);
+        res.json((0, utils_1.sanitizeUser)(user));
     }
     catch (err) {
         next(new Error(err.message));

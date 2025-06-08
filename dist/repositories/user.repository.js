@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.upsertUser = exports.deleteUser = exports.createUser = exports.findUserById = exports.findAllUsers = void 0;
+exports.findUserByEmail = exports.upsertUser = exports.deleteUser = exports.createUser = exports.findUserById = exports.findAllUsers = void 0;
 const client_1 = require("@prisma/client");
 const prisma_1 = require("../lib/prisma");
 const findAllUsers = async ({ page = 1, limit = 10, sort = "id", order = "asc", search = "", }) => {
@@ -46,8 +46,16 @@ exports.deleteUser = deleteUser;
 const upsertUser = async (id, userData) => {
     return await prisma_1.prisma.user.upsert({
         where: { id: id },
-        update: { name: userData.name, email: userData.email },
-        create: { name: userData.name ?? "", email: userData.email ?? "" },
+        update: userData,
+        create: { name: userData.name ?? "", email: userData.email ?? "", password: userData.password ?? null },
     });
 };
 exports.upsertUser = upsertUser;
+const findUserByEmail = async (email) => {
+    return await prisma_1.prisma.user.findUnique({
+        where: {
+            email: email,
+        },
+    });
+};
+exports.findUserByEmail = findUserByEmail;

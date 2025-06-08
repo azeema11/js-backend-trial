@@ -4,3 +4,5 @@ export interface User {
   email: string;
   password: string | null; // Optional, can be null if user has not set a password
 }
+
+export type PublicUser = Omit<User, 'password'>;
