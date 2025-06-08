@@ -53,7 +53,15 @@ export const deleteUser = async (id: number): Promise<User | null> => {
 export const upsertUser = async (id: number, userData: UpdateUserInput): Promise<User> => {
     return await prisma.user.upsert({
         where: { id: id },
-        update: { name: userData.name, email: userData.email },
-        create: { name: userData.name ?? "", email: userData.email ?? "" },
+        update: userData,
+        create: { name: userData.name ?? "", email: userData.email ?? "", password: userData.password ?? null },
+    });
+}
+
+export const findUserByEmail = async (email: string): Promise<User | null> => {
+    return await prisma.user.findUnique({
+        where: {
+            email: email,
+        },
     });
 }

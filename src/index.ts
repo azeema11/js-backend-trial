@@ -1,6 +1,7 @@
 import express from "express";
 import userRoutes from "./routes/user";
 import expenseRoutes from "./routes/expense";
+import authRoutes from "./routes/auth";
 import multipleRoutes from "./routes/math/multiply"; // Uncomment if you want to use the math routes
 import { Request, Response, NextFunction } from "express";
 
@@ -8,6 +9,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/math/multiply", multipleRoutes); // Uncomment if you want to use the math routes
 app.use("/expense", expenseRoutes);
